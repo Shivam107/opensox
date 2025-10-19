@@ -10,6 +10,7 @@ import type { CorsOptions as CorsOptionsType } from "cors";
 import rateLimit from "express-rate-limit";
 import helmet from "helmet";
 import ipBlocker from "./middleware/ipBlock.js";
+import Razorpay from "razorpay";
 
 dotenv.config();
 
@@ -18,6 +19,11 @@ const PORT = process.env.PORT || 4000;
 const CORS_ORIGINS = process.env.CORS_ORIGINS
   ? process.env.CORS_ORIGINS.split(",")
   : ["http://localhost:3000", "http://localhost:5000"];
+
+export const rz_instance = new Razorpay({
+  key_id: process.env.RAZORPAY_KEY_ID!,
+  key_secret: process.env.RAZORPAY_KEY_SECRET!,
+});
 
 // Security headers
 app.use(helmet());
