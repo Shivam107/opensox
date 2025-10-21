@@ -13,47 +13,73 @@ model QueryCount {
 }
 
 model User {
-  id String @id @default(cuid())
-
-  email String @unique
-
-  firstName String
-
-  authMethod String
-
-  createdAt DateTime @default(now())
-
-  lastLogin DateTime @updatedAt
-
-  accounts Account[]
+  id            String   @id @default(cuid())
+  email         String   @unique
+  firstName     String
+  authMethod    String
+  createdAt     DateTime @default(now())
+  lastLogin     DateTime @updatedAt
+  accounts      Account[]
+  payments      Payment[]
+  subscriptions Subscription[]
 }
 
 model Account {
-  id String @id @default(cuid())
-
-  userId String // Foreign key to User
-
-  type String // "oauth", "email", etc.
-
-  provider String // "google", "github", etc.
-
-  providerAccountId String // ID from the provider
-
-  refresh_token String?
-
-  access_token String?
-
-  expires_at Int?
-
-  token_type String?
-
-  scope String?
-
-  id_token String?
-
-  session_state String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
+}
+
+model Payment {
+  id                String        @id @default(cuid())
+  userId            String
+  subscriptionId    String?
+  razorpayPaymentId String        @unique
+  razorpayOrderId   String
+  amount            Int
+  currency          String        @default("INR")
+  status            String
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+  user              User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subscription      Subscription? @relation(fields: [subscriptionId], references: [id])
+}
+
+model Subscription {
+  id        String    @id @default(cuid())
+  userId    String
+  planId    String
+  status    String
+  startDate DateTime  @default(now())
+  endDate   DateTime
+  autoRenew Boolean   @default(true)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  plan      Plan      @relation(fields: [planId], references: [id], onDelete: Cascade)
+  payments  Payment[]
+
+  @@index([userId])
+}
+
+model Plan {
+  id          String   @id @default(cuid())
+  name        String   // e.g. "pro-monthly", "pro-yearly", "free"
+  interval    String   // "monthly" | "yearly"
+  price       Int      // amount in paise
+  currency    String   @default("INR")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  subscriptions Subscription[]
 }

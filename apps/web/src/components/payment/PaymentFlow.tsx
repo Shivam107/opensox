@@ -66,6 +66,13 @@ const PaymentFlow: React.FC<PaymentFlowProps> = ({
 
   const handlePayment = async () => {
     try {
+      // Check if user is logged in
+      if (!session) {
+        // Redirect to login with return URL to come back to pricing
+        router.push("/login?callbackUrl=/pricing");
+        return;
+      }
+
       setIsProcessing(true);
 
       const razorpayKey = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
