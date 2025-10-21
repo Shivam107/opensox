@@ -148,7 +148,7 @@ export const convertApiOutputToUserOutput = (
     url: item.url,
     avatarUrl: item.owner.avatarUrl,
     totalIssueCount: item.issues.totalCount,
-    primaryLanguage: item.primaryLanguage.name,
+    primaryLanguage: item.primaryLanguage?.name || "Other",
     popularity: filters.Popularity ? filters.Popularity : "-",
     stage: filters.Stage ? filters.Stage : "-",
     competition: filters.Competition ? filters.Competition : "-",

@@ -30,32 +30,24 @@ export default function Filter({
 
   return (
     <div onClick={onClick}>
-      <AccordionItem value={filterName} className="px-3">
+      <AccordionItem value={filterName} className="px-6 border-none">
         <AccordionTrigger className={triggerClasses}>
-          {filterName}
+          <span className="text-sm font-medium text-white">{filterName}</span>
         </AccordionTrigger>
-        <AccordionContent
-          className={
-            filterName === "Hire contributors" ||
-            filterName === "Funding" ||
-            filterName === "Trending"
-              ? "text-white-100"
-              : ""
-          }
-        >
-          <RadioGroup>
+        <AccordionContent className="pt-1 pb-3">
+          <RadioGroup className="space-y-3">
             {filters.map((filter) => (
-              <div key={filter} className="flex items-center space-x-2">
+              <div key={filter} className="flex items-center space-x-3">
                 <RadioGroupItem
                   value={filter}
                   id={filter}
-                  onClick={() => {
-                    recordFilterInput(filter);
-                  }}
+                  onClick={() => recordFilterInput(filter)}
+                  className="border-[#1a1a1d] text-ox-purple"
                 />
                 <Label
                   htmlFor={filter}
                   onClick={() => recordFilterInput(filter)}
+                  className="text-sm text-zinc-400 cursor-pointer"
                 >
                   {filter}
                 </Label>

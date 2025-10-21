@@ -10,6 +10,7 @@ import { authConfig } from "@/lib/auth/config";
 import { SessionWrapper } from "./SessionWrapper";
 import SupportDropdown from "@/components/landing-sections/SupportDropdown";
 import { TRPCProvider } from "@/providers/trpc-provider";
+import { GeistSans } from "geist/font/sans";
 
 const dmReg = localFont({
   src: "./fonts/DMMono-Regular.ttf",
@@ -39,7 +40,7 @@ export default async function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${dmMed.variable} ${dmReg.variable} antialiased bg-background`}
+        className={`${GeistSans.className} ${dmMed.variable} ${dmReg.variable} antialiased bg-background`}
       >
         <PostHogProvider>
           <ThemeProvider

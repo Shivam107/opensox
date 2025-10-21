@@ -1,9 +1,28 @@
 "use client"
 
-export default function SidebarItem({itemName, onclick}: {itemName: string, onclick?: () => void}) {
-    return (
-        <div className="w-full h-[6vh] flex items-center rounded-lg cursor-pointer" onClick={onclick}>
-            <h1 className="text-xs font-semibold hover:text-ox-purple pl-6">{itemName}</h1>
-        </div>
-    )
+import React from "react";
+
+type SidebarItemProps = {
+  itemName: string;
+  onclick?: () => void;
+  icon?: React.ReactNode;
+  collapsed?: boolean;
+};
+
+export default function SidebarItem({ itemName, onclick, icon, collapsed = false }: SidebarItemProps) {
+  return (
+    <div
+      className={`w-full h-[44px] flex items-center rounded-md cursor-pointer transition-colors px-2 ${
+        collapsed ? "justify-center" : "gap-3 pl-3"
+      } hover:bg-[#121214]`}
+      onClick={onclick}
+    >
+      {icon && <span className="shrink-0 text-[#eaeaea]">{icon}</span>}
+      {!collapsed && (
+        <h1 className="text-xs font-medium text-[#c8c8c8] group-hover:text-ox-purple">
+          {itemName}
+        </h1>
+      )}
+    </div>
+  );
 }
