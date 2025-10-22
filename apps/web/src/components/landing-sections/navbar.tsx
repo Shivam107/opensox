@@ -112,7 +112,7 @@ const Navbar = () => {
           target="_blank"
           rel="noopener noreferrer"
           onClick={()=>setIsOpen(false)}
-          className="flex items-center gap-2 px-4 py-2 bg-[0#d1117] hover:bg-[#161b22] rounded-lg border border-[#30363d] text-white transition-colors"
+          className="flex items-center gap-2 px-4 py-2 bg-[#0d1117] hover:bg-[#161b22] rounded-lg border border-[#30363d] text-white transition-colors"
         >
           <Github className="w-5 h-5" />
           <span className="text-sm font-medium">Contribute</span>
