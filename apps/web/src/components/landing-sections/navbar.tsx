@@ -13,7 +13,7 @@ const Navbar = () => {
   const pathname = usePathname();
   const isPricingPage = pathname === "/pricing";
   const [showNavbar, setShowNavbar] = useState(isPricingPage ? true : false);
-  const [isOpen,setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   useMotionValueEvent(scrollYProgress, "change", (latest) => {
     if (!isPricingPage) {
@@ -28,7 +28,7 @@ const Navbar = () => {
     { name: "How it works", href: "/#HIW" },
     { name: "Stats", href: "/#Stats" },
     { name: "Contact", href: "/#Contact" },
-    {name:"FAQ",href:"./#faq"}
+    { name: "FAQ", href: "/#faq"}
   ];
 
   return (
@@ -93,7 +93,6 @@ const Navbar = () => {
           </PrimaryButtom>
         </Link>
       </div>
-
       {isOpen && (
         <motion.div 
         initial={{opacity:0,y:-10}} 
@@ -104,28 +103,23 @@ const Navbar = () => {
           {links.map((link,index)=>(
             <Link key={index} href={link.href} onClick={()=>setIsOpen(false)} className="text-white hover:text-gray-300 text-lg">{link.name}
             </Link>
-            
           ))}
-
           <Link
           href="https://github.com/apsinghdev/opensox"
           target="_blank"
           rel="noopener noreferrer"
           onClick={()=>setIsOpen(false)}
           className="flex items-center gap-2 px-4 py-2 bg-[#0d1117] hover:bg-[#161b22] rounded-lg border border-[#30363d] text-white transition-colors"
-        >
-          <Github className="w-5 h-5" />
-          <span className="text-sm font-medium">Contribute</span>
-        </Link>
-
-        <Link href="/dashboard/home" onClick={()=> setIsOpen(false)} className="cursor-pointer z-30">
-          <PrimaryButtom>
-            <Terminal />
-            Get Started
-          </PrimaryButtom>
-        </Link>
-
-
+          >
+            <Github className="w-5 h-5" />
+            <span className="text-sm font-medium">Contribute</span>
+          </Link>
+          <Link href="/dashboard/home" onClick={()=> setIsOpen(false)} className="cursor-pointer z-30">
+            <PrimaryButtom>
+              <Terminal />
+              Get Started
+            </PrimaryButtom>
+          </Link>
         </motion.div>)}
     </motion.nav>
   );
