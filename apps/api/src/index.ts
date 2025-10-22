@@ -17,14 +17,19 @@ const app = express();
 
 // added trust proxy
 const rawTrustProxy = process.env.TRUST_PROXY;
-const TRUST_PROXY =
-  rawTrustProxy && rawTrustProxy !== "false"
-    ? isNaN(Number(rawTrustProxy))
-      ? rawTrustProxy === "true"
-        ? true
-        : rawTrustProxy
-      : Number(rawTrustProxy)
-    : 1;
+let TRUST_PROXY: boolean | number | string;
+
+if (!rawTrustProxy) {
+ TRUST_PROXY = 1; 
+} else if (rawTrustProxy === "false") {
+  TRUST_PROXY = false; 
+} else if (rawTrustProxy === "true") {
+  TRUST_PROXY = true; 
+} else if (!isNaN(Number(rawTrustProxy))) {
+  TRUST_PROXY = Number(rawTrustProxy); 
+} else {
+  TRUST_PROXY = rawTrustProxy; 
+}
 
 app.set("trust proxy", TRUST_PROXY);
 
