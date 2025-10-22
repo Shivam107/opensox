@@ -14,6 +14,20 @@ import ipBlocker from "./middleware/ipBlock.js";
 dotenv.config();
 
 const app = express();
+
+// added trust proxy
+const rawTrustProxy = process.env.TRUST_PROXY;
+const TRUST_PROXY =
+  rawTrustProxy && rawTrustProxy !== "false"
+    ? isNaN(Number(rawTrustProxy))
+      ? rawTrustProxy === "true"
+        ? true
+        : rawTrustProxy
+      : Number(rawTrustProxy)
+    : 1;
+
+app.set("trust proxy", TRUST_PROXY);
+
 const PORT = process.env.PORT || 4000;
 const CORS_ORIGINS = process.env.CORS_ORIGINS
   ? process.env.CORS_ORIGINS.split(",")
