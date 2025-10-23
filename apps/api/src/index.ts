@@ -13,6 +13,7 @@ import ipBlocker from "./middleware/ipBlock.js";
 import Razorpay from "razorpay";
 import crypto from "crypto";
 import { paymentService } from "./services/payment.service.js";
+import { verifyToken } from "./utils/auth.js";
 
 dotenv.config();
 
@@ -96,6 +97,63 @@ app.get("/admin/blocked-ips", (req: Request, res: Response) => {
 // Test endpoint
 app.get("/test", apiLimiter, (req: Request, res: Response) => {
   res.status(200).json({ status: "ok", message: "Test endpoint is working" });
+});
+
+// Slack Community Invite Endpoint (Protected)
+app.get("/join-community", apiLimiter, async (req: Request, res: Response) => {
+  try {
+    // Get token from Authorization header or query parameter
+    let token: string | undefined;
+    const authHeader = req.headers.authorization;
+
+    if (authHeader && authHeader.startsWith("Bearer ")) {
+      token = authHeader.substring(7); // Remove "Bearer " prefix
+    } else if (req.query.token && typeof req.query.token === "string") {
+      token = req.query.token;
+    }
+
+    if (!token) {
+      return res.status(401).json({ error: "Unauthorized - Missing token" });
+    }
+
+    // Verify token and get user
+    let user;
+    try {
+      user = await verifyToken(token);
+    } catch (error) {
+      return res.status(401).json({ error: "Unauthorized - Invalid token" });
+    }
+
+    // Check if user has an active subscription
+    const subscription = await prismaModule.prisma.subscription.findFirst({
+      where: {
+        userId: user.id,
+        status: "active",
+        endDate: {
+          gte: new Date(),
+        },
+      },
+    });
+
+    if (!subscription) {
+      return res.status(403).json({
+        error: "Forbidden - Active subscription required to join community",
+      });
+    }
+
+    // Get Slack invite URL from environment
+    const slackInviteUrl = process.env.SLACK_INVITE_URL;
+    if (!slackInviteUrl) {
+      console.error("SLACK_INVITE_URL not configured");
+      return res.status(500).json({ error: "Community invite not configured" });
+    }
+
+    // Redirect to Slack community
+    return res.redirect(slackInviteUrl);
+  } catch (error: any) {
+    console.error("Community invite error:", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
 });
 
 // Razorpay Webhook Handler (Backup Flow)

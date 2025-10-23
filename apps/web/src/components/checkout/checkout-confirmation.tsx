@@ -1,6 +1,9 @@
-import React from "react";
+"use client";
+
+import React, { useState } from "react";
 import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useSession } from "next-auth/react";
 
 interface CheckoutConfirmationProps {
   className?: string;
@@ -9,6 +12,27 @@ interface CheckoutConfirmationProps {
 const CheckoutConfirmation: React.FC<CheckoutConfirmationProps> = ({
   className,
 }) => {
+  const { data: session } = useSession();
+  const [error, setError] = useState<string | null>(null);
+
+  const handleJoinCommunity = () => {
+    if (!session?.user) {
+      setError("Please sign in to join the community");
+      return;
+    }
+
+    const accessToken = (session as any)?.accessToken;
+
+    if (!accessToken) {
+      setError("Authentication token not found");
+      return;
+    }
+
+    // Redirect to backend endpoint which will validate subscription and redirect to Slack
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+    window.location.href = `${apiUrl}/join-community?token=${encodeURIComponent(accessToken)}`;
+  };
+
   return (
     <div className={cn("max-w-4xl mx-auto p-8 lg:p-16", className)}>
       <div className="relative bg-transparent border-2 border-white/20 rounded-[2rem] p-8 lg:p-16 backdrop-blur-sm">
@@ -28,9 +52,26 @@ const CheckoutConfirmation: React.FC<CheckoutConfirmationProps> = ({
           </p>
 
           <p className="text-lg lg:text-xl text-white/90 leading-relaxed font-light max-w-3xl mx-auto">
+            Click on "Join" button below to join the Opensox premium community.
+          </p>
+
+          <p className="text-lg lg:text-xl text-white/90 leading-relaxed font-light max-w-3xl mx-auto">
             If you have any doubts, feel free to ping us here:{" "}
             <span className="text-[#A970FF]">hi@opensox.ai</span>
           </p>
+
+          {/* Join Community Button - Only shown when logged in */}
+          {session?.user && (
+            <div className="pt-4">
+              <button
+                onClick={handleJoinCommunity}
+                className="px-8 py-3 bg-[#A970FF] hover:bg-[#9255E8] text-white font-semibold rounded-lg transition-colors duration-200"
+              >
+                Join
+              </button>
+              {error && <p className="text-red-400 text-sm mt-2">{error}</p>}
+            </div>
+          )}
         </div>
       </div>
     </div>
