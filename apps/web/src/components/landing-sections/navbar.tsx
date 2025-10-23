@@ -14,7 +14,19 @@ const Navbar = () => {
   const isPricingPage = pathname === "/pricing";
   const [showNavbar, setShowNavbar] = useState(isPricingPage ? true : false);
   const [isOpen, setIsOpen] = useState(false);
+  
+  React.useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen) {
+        setIsOpen(false);
+        (document.activeElement as HTMLElement)?.blur();
+      }
+    };
 
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [isOpen]);
+  
   useMotionValueEvent(scrollYProgress, "change", (latest) => {
     if (!isPricingPage) {
       setShowNavbar(latest > 0);
