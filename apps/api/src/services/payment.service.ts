@@ -1,4 +1,8 @@
 import { rz_instance } from "../index.js";
+import crypto from "crypto";
+import prismaModule from "../prisma.js";
+
+const { prisma } = prismaModule;
 
 interface CreateOrderInput {
   amount: number;
@@ -36,7 +40,29 @@ interface RazorpayError {
 
 type CreateOrderResponse = RazorpayOrderSuccess | RazorpayError;
 
+interface PaymentData {
+  razorpayPaymentId: string;
+  razorpayOrderId: string;
+  amount: number;
+  currency: string;
+}
+
 export const paymentService = {
+  /**
+   * Get plan details from database
+   */
+  async getPlan(planId: string) {
+    try {
+      const plan = await prisma.plan.findUnique({
+        where: { id: planId },
+      });
+      return plan;
+    } catch (error) {
+      console.error("Error fetching plan:", error);
+      throw new Error("Failed to fetch plan");
+    }
+  },
+
   /**
    * Create a new Razorpay order
    */
@@ -50,8 +76,6 @@ export const paymentService = {
         receipt,
         notes: notes || {},
       });
-
-      console.log("order", order)
 
       return order as RazorpayOrderSuccess;
     } catch (error: any) {
@@ -73,6 +97,155 @@ export const paymentService = {
           field: "",
         },
       } as RazorpayError;
+    }
+  },
+
+  /**
+   * Verify Razorpay payment signature using HMAC SHA256
+   */
+  verifyPaymentSignature(
+    orderId: string,
+    paymentId: string,
+    signature: string
+  ): boolean {
+    try {
+      const keySecret = process.env.RAZORPAY_KEY_SECRET;
+      if (!keySecret) {
+        throw new Error("RAZORPAY_KEY_SECRET not configured");
+      }
+
+      // Create the expected signature
+      const generatedSignature = crypto
+        .createHmac("sha256", keySecret)
+        .update(`${orderId}|${paymentId}`)
+        .digest("hex");
+
+      // Compare signatures securely
+      return crypto.timingSafeEqual(
+        Buffer.from(signature),
+        Buffer.from(generatedSignature)
+      );
+    } catch (error) {
+      console.error("Signature verification error:", error);
+      return false;
+    }
+  },
+
+  /**
+   * Create payment record in database
+   */
+  async createPaymentRecord(
+    userId: string,
+    paymentData: PaymentData
+  ): Promise<any> {
+    try {
+      // Check if payment already exists (idempotency)
+      const existingPayment = await prisma.payment.findUnique({
+        where: { razorpayPaymentId: paymentData.razorpayPaymentId },
+      });
+
+      if (existingPayment) {
+        return existingPayment;
+      }
+
+      // Create new payment record
+      const payment = await prisma.payment.create({
+        data: {
+          userId,
+          razorpayPaymentId: paymentData.razorpayPaymentId,
+          razorpayOrderId: paymentData.razorpayOrderId,
+          amount: paymentData.amount,
+          currency: paymentData.currency,
+          status: "captured",
+        },
+      });
+
+      return payment;
+    } catch (error) {
+      console.error("Error creating payment record:", error);
+      throw new Error("Failed to create payment record");
+    }
+  },
+
+  /**
+   * Create subscription for user based on plan
+   */
+  async createSubscription(
+    userId: string,
+    planId: string,
+    paymentId: string
+  ): Promise<any> {
+    try {
+      // Get plan details
+      const plan = await prisma.plan.findUnique({
+        where: { id: planId },
+      });
+
+      if (!plan) {
+        throw new Error("Plan not found");
+      }
+
+      // Calculate end date - Currently only yearly plan is supported
+      const startDate = new Date();
+      const endDate = new Date(startDate);
+
+      // Set subscription for 1 year (yearly plan)
+      endDate.setFullYear(endDate.getFullYear() + 1);
+
+      // Future plan intervals (commented out for now):
+      // switch (plan.interval.toLowerCase()) {
+      //   case "monthly":
+      //     endDate.setMonth(endDate.getMonth() + 1);
+      //     break;
+      //   case "quarterly":
+      //     endDate.setMonth(endDate.getMonth() + 3);
+      //     break;
+      //   case "yearly":
+      //   case "annual":
+      //     endDate.setFullYear(endDate.getFullYear() + 1);
+      //     break;
+      //   default:
+      //     endDate.setFullYear(endDate.getFullYear() + 1);
+      // }
+
+      // Check if user already has an active subscription for this payment
+      const existingSubscription = await prisma.subscription.findFirst({
+        where: {
+          userId,
+          payments: {
+            some: {
+              id: paymentId,
+            },
+          },
+        },
+      });
+
+      if (existingSubscription) {
+        return existingSubscription;
+      }
+
+      // Create subscription
+      const subscription = await prisma.subscription.create({
+        data: {
+          userId,
+          planId,
+          status: "active",
+          startDate,
+          endDate,
+          autoRenew: true,
+        },
+      });
+
+      // Link payment to subscription
+      await prisma.payment.update({
+        where: { id: paymentId },
+        data: { subscriptionId: subscription.id },
+      });
+
+      return subscription;
+    } catch (error) {
+      console.error("Error creating subscription:", error);
+      throw new Error("Failed to create subscription");
     }
   },
 };

@@ -372,8 +372,7 @@ const SecondaryPricingCard = () => {
             </div>
             <div className="w-full border-dashed border-border-primary px-6 lg:px-10 py-4 ">
               <PaymentFlow
-                amount={1}
-                currency="INR"
+                planId={process.env.NEXT_PUBLIC_YEARLY_PREMIUM_PLAN_ID!}
                 planName="Opensox Premium"
                 description="Annual Subscription"
                 buttonText="Invest"
