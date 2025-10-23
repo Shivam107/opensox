@@ -33,6 +33,7 @@
     "posthog-js": "^1.203.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-player": "^3.3.3",
     "react-qr-code": "^2.0.18",
     "react-tweet": "^3.2.1",
     "superjson": "^2.2.5",

@@ -35,10 +35,15 @@ const SIDEBAR_ROUTES = [
     label: "Projects",
     icon: <FolderIcon className="size-5" />,
   },
+  {
+    path: "/dashboard/newsletters",
+    label: "Newsletter",
+    icon: <EnvelopeIcon className="size-5" />,
+  },
 ];
 
 const getSidebarLinkClassName = (currentPath: string, routePath: string) => {
-  const isActive = currentPath === routePath;
+  const isActive = currentPath.startsWith(routePath);
   return `${isActive ? "text-ox-purple" : "text-ox-white"}`;
 };
 

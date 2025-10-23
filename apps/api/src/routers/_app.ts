@@ -5,6 +5,7 @@ import { projectRouter } from "./projects.js";
 import { authRouter } from "./auth.js";
 import { paymentRouter } from "./payment.js";
 import { z } from "zod";
+import { newsletterRouter } from "./newsletter.js";
 
 const testRouter = router({
   test: publicProcedure
@@ -21,6 +22,7 @@ export const appRouter = router({
   project: projectRouter,
   auth: authRouter,
   payment: paymentRouter,
+  newsletter: newsletterRouter,
 });
 
 export type AppRouter = typeof appRouter;
