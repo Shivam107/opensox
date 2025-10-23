@@ -17,14 +17,14 @@ export default function DashboardLayout({
       <div className="flex w-full h-16">
         <DashboardHeader></DashboardHeader>
       </div>
-      <div className="flex flex-row w-full">
+      <div className="flex flex-row w-full overflow-hidden">
         {showFilters && <FiltersContainer></FiltersContainer>}
         <aside
-          className={`w-48 md:w-[40%] xl:w-[20%] ${showSidebar ? "block relative" : "hidden"} xl:block`}
+          className={`flex-shrink-0 w-48 md:w-[40%] xl:w-[20%] ${showSidebar ? "block relative" : "hidden"} xl:block overflow-y-auto`}
         >
           <Sidebar></Sidebar>
         </aside>
-        <main className="flex-grow">{children}</main>
+        <main className="flex-grow overflow-y-auto">{children}</main>
       </div>
     </div>
   );

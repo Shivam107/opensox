@@ -54,7 +54,7 @@ const config: Config = {
         "ox-purple": "#9455f4",
         "ox-purple-2": "#7A45C3",
         "ox-gray": "rgb(75 85 99)",
-        "ox-white": "text-slate-400",
+        "ox-white": "#ffffff",
         "ox-black-1": "#0E0E10",
         "ox-black-2": "#15161A",
       },

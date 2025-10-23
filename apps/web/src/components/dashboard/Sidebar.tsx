@@ -9,18 +9,22 @@ import { useShowSidebar } from "@/store/useShowSidebar";
 import { signOut } from "next-auth/react";
 
 const SIDEBAR_ROUTES = [
-  {
-    path: "/dashboard/home",
-    label: "Home",
+  { 
+    path: "/dashboard/home", 
+    label: "Home", 
   },
-  {
-    path: "/dashboard/projects",
-    label: "Projects",
+  { 
+    path: "/dashboard/projects", 
+    label: "Projects", 
+  },
+  { 
+    path: "/dashboard/newsletters", 
+    label: "Newsletter", 
   },
 ];
 
 const getSidebarLinkClassName = (currentPath: string, routePath: string) => {
-  const isActive = currentPath === routePath;
+  const isActive = currentPath.startsWith(routePath);
   return `${isActive ? "text-ox-purple" : "text-ox-white"}`;
 };
 

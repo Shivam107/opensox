@@ -4,6 +4,7 @@ import { userRouter } from "./user.js";
 import { projectRouter } from "./projects.js";
 import { authRouter } from "./auth.js";
 import { z } from "zod";
+import { newsletterRouter } from "./newsletter.js";
 
 const testRouter = router({
   test: publicProcedure
@@ -19,6 +20,7 @@ export const appRouter = router({
   user: userRouter,
   project: projectRouter,
   auth: authRouter,
+  newsletter: newsletterRouter,
 });
 
 export type AppRouter = typeof appRouter;
