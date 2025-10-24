@@ -55,24 +55,26 @@ const Navbar = () => {
           : "fixed rounded-3xl top-4 border w-[94%] md:w-[80%] mx-auto left-1/2 -translate-x-1/2"
       )}
     >
-      <button
-        className="md:hidden text-white"
-        onClick={() => setIsOpen(!isOpen)}
-        aria-label="Toggle navigation menu"
-        aria-expanded={isOpen}
-      >
-        {isOpen ? <X size={28} /> : <Menu size={28} />}
-      </button>
-      <div className="text-2xl font-medium tracking-tighter flex items-center gap-2">
-        <div className="w-10 aspect-square overflow-hidden relative">
-          <Image
-            src="/assets/logo.svg"
-            alt="background"
-            fill
-            className="object-cover w-full h-full"
-          />
+      <div className="flex items-center gap-3">
+        <button
+          className="md:hidden text-white"
+          onClick={() => setIsOpen(!isOpen)}
+          aria-label="Toggle navigation menu"
+          aria-expanded={isOpen}
+        >
+          {isOpen ? <X size={28} /> : <Menu size={28} />}
+        </button>
+        <div className="text-xl md:text-2xl font-medium tracking-tighter flex items-center gap-2">
+          <div className="w-8 md:w-10 aspect-square overflow-hidden relative">
+            <Image
+              src="/assets/logo.svg"
+              alt="background"
+              fill
+              className="object-cover w-full h-full"
+            />
+          </div>
+          <span>Opensox AI</span>
         </div>
-        Opensox AI
       </div>
       <div className="hidden md:flex items-center gap-5 tracking-tight text-lg font-light text-[#d1d1d1]">
         {links.map((link, index) => {
@@ -91,7 +93,7 @@ const Navbar = () => {
           );
         })}
       </div>
-      <div className="hidden md:flex items-center gap-3">
+      <div className="flex items-center gap-3">
         <Link
           href="https://github.com/apsinghdev/opensox"
           target="_blank"
@@ -103,8 +105,8 @@ const Navbar = () => {
         </Link>
         <Link href="/dashboard/home" className="cursor-pointer z-30">
           <PrimaryButtom>
-            <Terminal />
-            Get Started
+            <Terminal size={20} />
+            <span className="md:inline">Get Started</span>
           </PrimaryButtom>
         </Link>
       </div>
@@ -134,16 +136,6 @@ const Navbar = () => {
           >
             <Github className="w-5 h-5" />
             <span className="text-sm font-medium">Contribute</span>
-          </Link>
-          <Link
-            href="/dashboard/home"
-            onClick={() => setIsOpen(false)}
-            className="cursor-pointer z-30"
-          >
-            <PrimaryButtom>
-              <Terminal />
-              Get Started
-            </PrimaryButtom>
           </Link>
         </motion.div>
       )}
