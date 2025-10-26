@@ -10,4 +10,3 @@ declare module "zeptomail" {
     }): Promise<any>;
   }
 }
-

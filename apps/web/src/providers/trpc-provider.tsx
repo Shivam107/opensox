@@ -7,7 +7,7 @@ import { useSession } from "next-auth/react";
 import { trpc } from "@/lib/trpc";
 
 export function TRPCProvider({ children }: { children: React.ReactNode }) {
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
   const [queryClient] = useState(
     () =>
       new QueryClient({
@@ -19,7 +19,7 @@ export function TRPCProvider({ children }: { children: React.ReactNode }) {
       })
   );
 
-  // Recreate client when session status changes to ensure we get the latest token
+  // Recreate client when session changes to ensure we get the latest token
   const trpcClient = useMemo(() => {
     const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
     const trpcUrl = baseUrl.endsWith("/trpc") ? baseUrl : `${baseUrl}/trpc`;
@@ -40,7 +40,7 @@ export function TRPCProvider({ children }: { children: React.ReactNode }) {
         }),
       ],
     });
-  }, [status, session]);
+  }, [session]);
 
   return (
     <trpc.Provider client={trpcClient} queryClient={queryClient}>

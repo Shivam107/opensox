@@ -62,15 +62,12 @@ const PaymentFlow: React.FC<PaymentFlowProps> = ({
         }
 
         // Call backend verification endpoint
-
-        const result = await (utils.client.payment as any).verifyPayment.mutate(
-          {
-            razorpay_payment_id: response.razorpay_payment_id,
-            razorpay_order_id: response.razorpay_order_id,
-            razorpay_signature: response.razorpay_signature,
-            planId: planId,
-          }
-        );
+        await (utils.client.payment as any).verifyPayment.mutate({
+          razorpay_payment_id: response.razorpay_payment_id,
+          razorpay_order_id: response.razorpay_order_id,
+          razorpay_signature: response.razorpay_signature,
+          planId: planId,
+        });
 
         // Show success and redirect
         router.push("/checkout");

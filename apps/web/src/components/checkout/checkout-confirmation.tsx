@@ -52,7 +52,8 @@ const CheckoutConfirmation: React.FC<CheckoutConfirmationProps> = ({
           </p>
 
           <p className="text-lg lg:text-xl text-white/90 leading-relaxed font-light max-w-3xl mx-auto">
-            Click on "Join" button below to join the Opensox premium community.
+            Click on &quot;Join&quot; button below to join the Opensox premium
+            community.
           </p>
 
           <p className="text-lg lg:text-xl text-white/90 leading-relaxed font-light max-w-3xl mx-auto">
