@@ -2,12 +2,12 @@
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { httpBatchLink } from "@trpc/client";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useSession } from "next-auth/react";
 import { trpc } from "@/lib/trpc";
 
 export function TRPCProvider({ children }: { children: React.ReactNode }) {
-  const session = useSession();
+  const { data: session, status } = useSession();
   const [queryClient] = useState(
     () =>
       new QueryClient({
@@ -19,7 +19,8 @@ export function TRPCProvider({ children }: { children: React.ReactNode }) {
       })
   );
 
-  const [trpcClient] = useState(() => {
+  // Recreate client when session status changes to ensure we get the latest token
+  const trpcClient = useMemo(() => {
     const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
     const trpcUrl = baseUrl.endsWith("/trpc") ? baseUrl : `${baseUrl}/trpc`;
 
@@ -28,7 +29,7 @@ export function TRPCProvider({ children }: { children: React.ReactNode }) {
         httpBatchLink({
           url: trpcUrl,
           async headers() {
-            const token = (session.data as any)?.accessToken;
+            const token = (session as any)?.accessToken;
             if (token) {
               return {
                 authorization: `Bearer ${token}`,
@@ -39,7 +40,7 @@ export function TRPCProvider({ children }: { children: React.ReactNode }) {
         }),
       ],
     });
-  });
+  }, [status, session]);
 
   return (
     <trpc.Provider client={trpcClient} queryClient={queryClient}>

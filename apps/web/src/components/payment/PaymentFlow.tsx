@@ -147,8 +147,8 @@ const PaymentFlow: React.FC<PaymentFlowProps> = ({
 
       await initiatePayment(options);
     } catch (error) {
-      console.error("Failed to create order:", error);
-      alert("Failed to initiate payment. Please try again.");
+      console.warn("Failed to create order:", error);
+      router.push("/login?callbackUrl=/pricing");
       setIsProcessing(false);
     }
   };

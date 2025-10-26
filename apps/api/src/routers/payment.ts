@@ -2,6 +2,10 @@ import { router, protectedProcedure } from "../trpc.js";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { paymentService } from "../services/payment.service.js";
+import { emailService } from "../services/email.service.js";
+import prismaModule from "../prisma.js";
+
+const { prisma } = prismaModule;
 
 const createOrderSchema = z.object({
   planId: z.string().min(1, "Plan ID is required"),
@@ -161,6 +165,34 @@ export const paymentRouter = router({
             input.planId,
             payment.id
           );
+
+          // Step 4: Fetch user details and send premium subscription email
+          try {
+            const user = await prisma.user.findUnique({
+              where: { id: userId },
+              select: { email: true, firstName: true },
+            });
+
+            if (user && user.email && user.firstName) {
+              // Send premium subscription confirmation email
+              await emailService.sendPremiumSubscriptionEmail(
+                user.email,
+                user.firstName
+              );
+            } else {
+              // Log warning but don't fail the payment verification
+              console.warn(
+                `Unable to send premium subscription email: User ${userId} not found or missing email/firstName`
+              );
+            }
+          } catch (emailError) {
+            // Log error but don't fail the payment verification
+            // Payment and subscription are already successful
+            console.error(
+              "Error sending premium subscription email:",
+              emailError
+            );
+          }
 
           return {
             success: true,

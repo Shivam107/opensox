@@ -104,10 +104,6 @@ export const emailService = {
         </p>
         
         <p style="color: #333; line-height: 1.8; font-size: 16px;">
-          Soon, I'll add you to the private Slack so that we can talk regularly.
-        </p>
-        
-        <p style="color: #333; line-height: 1.8; font-size: 16px;">
           Again, thank you :)
         </p>
         
@@ -142,8 +138,6 @@ Throughout this journey, I will make sure you get the best value for your money.
 To get started, please book your slot in the cal meet.
 
 Let's have a chat over a meeting so that I can understand where you are currently and how I can help you move ahead.
-
-Soon, I'll add you to the private Slack so that we can talk regularly.
 
 Again, thank you :)
 
