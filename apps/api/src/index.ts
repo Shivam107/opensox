@@ -13,6 +13,7 @@ import ipBlocker from "./middleware/ipBlock.js";
 import crypto from "crypto";
 import { paymentService } from "./services/payment.service.js";
 import { verifyToken } from "./utils/auth.js";
+import { SUBSCRIPTION_STATUS } from "./constants/subscription.js";
 
 dotenv.config();
 
@@ -118,7 +119,7 @@ app.get("/join-community", apiLimiter, async (req: Request, res: Response) => {
     const subscription = await prismaModule.prisma.subscription.findFirst({
       where: {
         userId: user.id,
-        status: "active",
+        status: SUBSCRIPTION_STATUS.ACTIVE,
         endDate: {
           gte: new Date(),
         },

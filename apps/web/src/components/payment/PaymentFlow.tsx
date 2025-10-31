@@ -50,7 +50,10 @@ const PaymentFlow: React.FC<PaymentFlowProps> = ({
     amount: number; // Stored for display purposes only
   } | null>(null);
 
-  const utils = trpc.useUtils();
+  const createOrderMutation = (trpc.payment as any).createOrder.useMutation();
+  const verifyPaymentMutation = (
+    trpc.payment as any
+  ).verifyPayment.useMutation();
 
   const { initiatePayment, isLoading, error } = useRazorpay({
     onSuccess: async (response) => {
@@ -61,8 +64,7 @@ const PaymentFlow: React.FC<PaymentFlowProps> = ({
           throw new Error("Order data not found");
         }
 
-        // Call backend verification endpoint
-        await (utils.client.payment as any).verifyPayment.mutate({
+        await verifyPaymentMutation.mutateAsync({
           razorpay_payment_id: response.razorpay_payment_id,
           razorpay_order_id: response.razorpay_order_id,
           razorpay_signature: response.razorpay_signature,
@@ -89,6 +91,11 @@ const PaymentFlow: React.FC<PaymentFlowProps> = ({
 
   const handlePayment = async () => {
     try {
+      if (!planId || planId.trim().length === 0) {
+        alert("Payment is currently unavailable. Please contact support.");
+        return;
+      }
+
       if (sessionStatus === "loading") {
         return;
       }
@@ -105,14 +112,11 @@ const PaymentFlow: React.FC<PaymentFlowProps> = ({
         throw new Error("Razorpay key not configured");
       }
 
-      // Create order via tRPC - backend will fetch plan and use its price
-      // Note: user_id will be obtained from JWT token on backend
-      const order = await (utils.client.payment as any).createOrder.mutate({
+      const order = await createOrderMutation.mutateAsync({
         planId: planId,
         receipt: `opensox_${Date.now()}`,
         notes: {
           plan: planName,
-          user_email: session.user?.email || "",
         },
       });
 
@@ -148,33 +152,25 @@ const PaymentFlow: React.FC<PaymentFlowProps> = ({
     } catch (error: any) {
       console.warn("Failed to create order:", error);
       setIsProcessing(false);
-
-      // Only redirect to login if it's an authentication error
-      const isAuthError =
-        error?.data?.code === "UNAUTHORIZED" ||
-        error?.message?.includes("UNAUTHORIZED") ||
-        error?.message?.includes("Missing or invalid authorization") ||
-        error?.message?.includes("Invalid or expired token");
-
-      if (isAuthError) {
-        router.push("/login?callbackUrl=/pricing");
-      } else {
-        // For other errors (network, validation, etc.), show user-friendly message
-        alert(
-          "Failed to create payment order. Please try again or contact support if the issue persists."
-        );
-      }
+      router.push("/login?callbackUrl=/pricing");
     }
   };
 
+  const planIdValid = planId && planId.trim().length > 0;
+
   // Show loading state while session is being determined
   const isButtonDisabled =
-    isProcessing || isLoading || sessionStatus === "loading";
+    !planIdValid ||
+    isProcessing ||
+    isLoading ||
+    sessionStatus === "loading" ||
+    createOrderMutation.isPending;
 
-  const buttonTextDisplay =
-    sessionStatus === "loading"
+  const buttonTextDisplay = !planIdValid
+    ? "Unavailable"
+    : sessionStatus === "loading"
       ? "Loading..."
-      : isProcessing || isLoading
+      : isProcessing || isLoading || createOrderMutation.isPending
         ? "Processing..."
         : buttonText;
 

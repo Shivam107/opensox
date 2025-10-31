@@ -1,10 +1,13 @@
-import { PrismaClient } from "@prisma/client";
+import type { PrismaClient } from "@prisma/client";
+import type prismaModule from "../prisma.js";
+
+type ExtendedPrismaClient = typeof prismaModule.prisma;
 
 export const queryService = {
   /**
    * Get total count of queries
    */
-  async getQueryCount(prisma: PrismaClient) {
+  async getQueryCount(prisma: ExtendedPrismaClient | PrismaClient) {
     const queryCount = await prisma.queryCount.findUnique({
       where: { id: 1 },
     });
@@ -17,7 +20,9 @@ export const queryService = {
   /**
    * Increment the query count by 1
    */
-  async incrementQueryCount(prisma: PrismaClient): Promise<void> {
+  async incrementQueryCount(
+    prisma: ExtendedPrismaClient | PrismaClient
+  ): Promise<void> {
     try {
       const updatedCount = await prisma.queryCount.update({
         where: { id: 1 },

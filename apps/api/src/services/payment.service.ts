@@ -1,6 +1,10 @@
 import { rz_instance } from "../clients/razorpay.js";
 import crypto from "crypto";
 import prismaModule from "../prisma.js";
+import {
+  SUBSCRIPTION_STATUS,
+  PAYMENT_STATUS,
+} from "../constants/subscription.js";
 
 const { prisma } = prismaModule;
 
@@ -115,16 +119,18 @@ export const paymentService = {
       }
 
       // Create the expected signature
-      const generatedSignature = crypto
+      const generatedSignatureHex = crypto
         .createHmac("sha256", keySecret)
         .update(`${orderId}|${paymentId}`)
         .digest("hex");
 
+      const a = Buffer.from(signature, "hex");
+      const b = Buffer.from(generatedSignatureHex, "hex");
+
+      if (a.length !== b.length) return false;
+
       // Compare signatures securely
-      return crypto.timingSafeEqual(
-        Buffer.from(signature),
-        Buffer.from(generatedSignature)
-      );
+      return crypto.timingSafeEqual(a, b);
     } catch (error) {
       console.error("Signature verification error:", error);
       return false;
@@ -156,7 +162,7 @@ export const paymentService = {
           razorpayOrderId: paymentData.razorpayOrderId,
           amount: paymentData.amount, // Amount in paise (smallest currency unit)
           currency: paymentData.currency,
-          status: "captured",
+          status: PAYMENT_STATUS.CAPTURED,
         },
       });
 
@@ -229,7 +235,7 @@ export const paymentService = {
         data: {
           userId,
           planId,
-          status: "active",
+          status: SUBSCRIPTION_STATUS.ACTIVE,
           startDate,
           endDate,
           autoRenew: true,

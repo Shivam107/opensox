@@ -20,9 +20,12 @@ export function useSubscription() {
   } = useSubscriptionStore();
 
   // Fetch subscription status using tRPC
-  const { data, isLoading: isFetching } = (
-    trpc.user as any
-  ).subscriptionStatus.useQuery(undefined, {
+  const {
+    data,
+    isLoading: isFetching,
+    isError,
+    isFetched,
+  } = (trpc.user as any).subscriptionStatus.useQuery(undefined, {
     enabled: !!session?.user && status === "authenticated",
     refetchOnWindowFocus: false,
     refetchOnMount: true,
@@ -36,13 +39,33 @@ export function useSubscription() {
 
     if (status === "unauthenticated") {
       reset();
+      setLoading(false);
+      return;
+    }
+
+    if (isError) {
+      setLoading(false);
       return;
     }
 
     if (data) {
       setSubscriptionStatus(data.isPaidUser, data.subscription);
+      return;
     }
-  }, [data, status, isFetching, setSubscriptionStatus, setLoading, reset]);
+
+    if (isFetched) {
+      setLoading(false);
+    }
+  }, [
+    data,
+    status,
+    isFetching,
+    isError,
+    isFetched,
+    setSubscriptionStatus,
+    setLoading,
+    reset,
+  ]);
 
   return {
     isPaidUser,

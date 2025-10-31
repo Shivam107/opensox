@@ -1,10 +1,14 @@
-import { PrismaClient } from "@prisma/client";
+import type { PrismaClient } from "@prisma/client";
+import type prismaModule from "../prisma.js";
+import { SUBSCRIPTION_STATUS } from "../constants/subscription.js";
+
+type ExtendedPrismaClient = typeof prismaModule.prisma;
 
 export const userService = {
   /**
    * Get total count of users
    */
-  async getUserCount(prisma: PrismaClient) {
+  async getUserCount(prisma: ExtendedPrismaClient | PrismaClient) {
     const userCount = await prisma.user.count();
 
     return {
@@ -15,11 +19,14 @@ export const userService = {
   /**
    * Check if user has an active subscription
    */
-  async checkSubscriptionStatus(prisma: PrismaClient, userId: string) {
+  async checkSubscriptionStatus(
+    prisma: ExtendedPrismaClient | PrismaClient,
+    userId: string
+  ) {
     const subscription = await prisma.subscription.findFirst({
       where: {
         userId,
-        status: "active",
+        status: SUBSCRIPTION_STATUS.ACTIVE,
         endDate: {
           gte: new Date(),
         },

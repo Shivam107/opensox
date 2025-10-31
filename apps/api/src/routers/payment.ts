@@ -7,6 +7,9 @@ import prismaModule from "../prisma.js";
 
 const { prisma } = prismaModule;
 
+const ALLOWED_NOTE_KEYS = ["plan", "user_email"] as const;
+const MAX_NOTE_VALUE_LENGTH = 255;
+
 const createOrderSchema = z.object({
   planId: z.string().min(1, "Plan ID is required"),
   receipt: z.string().min(1, "Receipt is required"),
@@ -59,18 +62,28 @@ export const paymentRouter = router({
             });
           }
 
-          // Add user_id and plan_id to notes for webhook processing
-          const notesWithUserId = {
-            ...(input.notes || {}),
-            user_id: userId,
-            plan_id: input.planId,
-          };
+          const sanitizedNotes: Record<string, string> = {};
+
+          if (input.notes) {
+            for (const key of ALLOWED_NOTE_KEYS) {
+              if (input.notes[key]) {
+                const value = String(input.notes[key]).slice(
+                  0,
+                  MAX_NOTE_VALUE_LENGTH
+                );
+                sanitizedNotes[key] = value;
+              }
+            }
+          }
+
+          sanitizedNotes.user_id = userId;
+          sanitizedNotes.plan_id = input.planId;
 
           const result = await paymentService.createOrder({
             amount: plan.price, // Use price from database
             currency: plan.currency,
             receipt: input.receipt,
-            notes: notesWithUserId,
+            notes: sanitizedNotes,
           });
 
           // Check if it's an error response

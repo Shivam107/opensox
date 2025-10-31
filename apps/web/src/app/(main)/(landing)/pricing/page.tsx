@@ -342,6 +342,10 @@ const PricingCard = () => {
 };
 
 const SecondaryPricingCard = () => {
+  const premiumPlanId = process.env.NEXT_PUBLIC_YEARLY_PREMIUM_PLAN_ID;
+  const planIdOk =
+    typeof premiumPlanId === "string" && premiumPlanId.length > 0;
+
   return (
     <div className="py-2">
       <div className=" border-border-primary w-full mx-auto flex h-full">
@@ -372,11 +376,13 @@ const SecondaryPricingCard = () => {
             </div>
             <div className="w-full border-dashed border-border-primary px-6 lg:px-10 py-4 ">
               <PaymentFlow
-                planId={process.env.NEXT_PUBLIC_YEARLY_PREMIUM_PLAN_ID!}
+                planId={planIdOk ? premiumPlanId : ""}
                 planName="Opensox Premium"
                 description="Annual Subscription"
-                buttonText="Invest"
-                buttonClassName="w-full max-w-[500px] mx-auto font-semibold"
+                buttonText={planIdOk ? "Invest" : "Unavailable"}
+                buttonClassName={`w-full max-w-[500px] mx-auto font-semibold ${
+                  planIdOk ? "" : "opacity-60 cursor-not-allowed"
+                }`}
               />
             </div>
             <div className="w-full border-dashed border-border-primary px-6 lg:px-10 py-4 flex flex-col gap-4 flex-1">

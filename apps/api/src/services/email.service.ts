@@ -12,6 +12,14 @@ interface SendEmailInput {
   textBody?: string;
 }
 
+const escapeHtml = (s: string): string =>
+  s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+
 // Initialize ZeptoMail client
 const initializeEmailClient = () => {
   const url =
@@ -77,10 +85,11 @@ export const emailService = {
     email: string,
     firstName: string
   ): Promise<boolean> {
+    const safeFirstName = escapeHtml(firstName);
     const htmlBody = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
         <p style="color: #333; line-height: 1.8; font-size: 16px;">
-          Hi ${firstName},
+          Hi ${safeFirstName},
         </p>
         
         <p style="color: #333; line-height: 1.8; font-size: 16px;">
@@ -127,7 +136,7 @@ export const emailService = {
       </div>
     `;
 
-    const textBody = `Hi ${firstName},
+    const textBody = `Hi ${safeFirstName},
 
 I am Ajeet, founder of Opensox AI.
 
@@ -147,7 +156,7 @@ Best,
 Ajeet from Opensox.ai`;
 
     return this.sendEmail({
-      to: [{ address: email, name: firstName }],
+      to: [{ address: email, name: safeFirstName }],
       subject: "Congratulations! You are in.",
       htmlBody,
       textBody,

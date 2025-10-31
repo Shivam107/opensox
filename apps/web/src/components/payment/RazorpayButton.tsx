@@ -68,7 +68,6 @@ const RazorpayButton: React.FC<RazorpayButtonProps> = ({
 
   const handlePayment = async () => {
     const razorpayKey = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
-    console.log(razorpayKey)
     if (!razorpayKey) {
       console.error("Razorpay key not found");
       return;

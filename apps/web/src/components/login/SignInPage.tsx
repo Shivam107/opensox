@@ -10,6 +10,27 @@ const SignInPage = () => {
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/dashboard/home";
 
+  const getSafeCallbackUrl = (url: string): string => {
+    if (!url || url.trim() === "") {
+      return "/dashboard/home";
+    }
+
+    if (url.startsWith("/") && !url.startsWith("//")) {
+      return url;
+    }
+
+    try {
+      const parsedUrl = new URL(url, window.location.origin);
+      if (parsedUrl.origin === window.location.origin) {
+        return parsedUrl.pathname + parsedUrl.search + parsedUrl.hash;
+      }
+    } catch {}
+
+    return "/dashboard/home";
+  };
+
+  const safeCallbackUrl = getSafeCallbackUrl(callbackUrl);
+
   return (
     <div className="font-semibold flex flex-col items-center gap-6 font-sans w-[550px] relative overflow-hidden py-20 px-10">
       <Overlay />
@@ -33,7 +54,7 @@ const SignInPage = () => {
         </p>
       </div>
       <PrimaryButton
-        onClick={() => signIn("google", { callbackUrl })}
+        onClick={() => signIn("google", { callbackUrl: safeCallbackUrl })}
         classname="w-full max-w-[380px] z-20 "
       >
         <div className="w-6">
@@ -42,7 +63,7 @@ const SignInPage = () => {
         Continue with Google
       </PrimaryButton>
       <PrimaryButton
-        onClick={() => signIn("github", { callbackUrl })}
+        onClick={() => signIn("github", { callbackUrl: safeCallbackUrl })}
         classname="w-full max-w-[380px] z-20 "
       >
         <div className="w-6">

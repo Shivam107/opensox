@@ -39,6 +39,14 @@ export const authService = {
         authMethod: authMethod || "google",
         lastLogin: new Date(),
       },
+      select: {
+        id: true,
+        email: true,
+        firstName: true,
+        authMethod: true,
+        createdAt: true,
+        lastLogin: true,
+      },
     });
 
     const token = generateToken(email);
