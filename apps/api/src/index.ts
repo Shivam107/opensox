@@ -96,19 +96,15 @@ app.get("/test", apiLimiter, (req: Request, res: Response) => {
 // Slack Community Invite Endpoint (Protected)
 app.get("/join-community", apiLimiter, async (req: Request, res: Response) => {
   try {
-    // Get token from Authorization header or query parameter
-    let token: string | undefined;
     const authHeader = req.headers.authorization;
 
-    if (authHeader && authHeader.startsWith("Bearer ")) {
-      token = authHeader.substring(7); // Remove "Bearer " prefix
-    } else if (req.query.token && typeof req.query.token === "string") {
-      token = req.query.token;
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return res.status(401).json({
+        error: "Unauthorized - Authorization header with Bearer token required",
+      });
     }
 
-    if (!token) {
-      return res.status(401).json({ error: "Unauthorized - Missing token" });
-    }
+    const token = authHeader.substring(7);
 
     // Verify token and get user
     let user;
@@ -142,8 +138,10 @@ app.get("/join-community", apiLimiter, async (req: Request, res: Response) => {
       return res.status(500).json({ error: "Community invite not configured" });
     }
 
-    // Redirect to Slack community
-    return res.redirect(slackInviteUrl);
+    return res.status(200).json({
+      slackInviteUrl,
+      message: "Subscription verified. You can join the community.",
+    });
   } catch (error: any) {
     console.error("Community invite error:", error);
     return res.status(500).json({ error: "Internal server error" });

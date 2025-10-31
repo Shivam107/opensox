@@ -15,7 +15,7 @@ const CheckoutConfirmation: React.FC<CheckoutConfirmationProps> = ({
   const { data: session } = useSession();
   const [error, setError] = useState<string | null>(null);
 
-  const handleJoinCommunity = () => {
+  const handleJoinCommunity = async () => {
     if (!session?.user) {
       setError("Please sign in to join the community");
       return;
@@ -28,9 +28,27 @@ const CheckoutConfirmation: React.FC<CheckoutConfirmationProps> = ({
       return;
     }
 
-    // Redirect to backend endpoint which will validate subscription and redirect to Slack
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
-    window.location.href = `${apiUrl}/join-community?token=${encodeURIComponent(accessToken)}`;
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+      const response = await fetch(`${apiUrl}/join-community`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        setError(errorData.error || "Failed to join community");
+        return;
+      }
+
+      const { slackInviteUrl } = await response.json();
+      window.location.href = slackInviteUrl;
+    } catch (err) {
+      console.error("Failed to join community:", err);
+      setError("Failed to connect to server");
+    }
   };
 
   return (
