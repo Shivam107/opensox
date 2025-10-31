@@ -12,6 +12,25 @@ model QueryCount {
   total_queries BigInt
 }
 
+enum PaymentStatus {
+  created
+  authorized
+  captured
+  refunded
+  failed
+}
+
+enum SubscriptionStatus {
+  created
+  authenticated
+  active
+  pending
+  halted
+  cancelled
+  completed
+  expired
+}
+
 model User {
   id            String         @id @default(cuid())
   email         String         @unique
@@ -48,9 +67,9 @@ model Payment {
   subscriptionId    String?
   razorpayPaymentId String        @unique
   razorpayOrderId   String
-  amount            Int
+  amount            Int           // Amount in paise (smallest currency unit)
   currency          String        @default("INR")
-  status            String
+  status            PaymentStatus
   createdAt         DateTime      @default(now())
   updatedAt         DateTime      @updatedAt
   subscription      Subscription? @relation(fields: [subscriptionId], references: [id])
@@ -61,9 +80,9 @@ model Subscription {
   id        String    @id @default(cuid())
   userId    String
   planId    String
-  status    String
+  status    SubscriptionStatus
   startDate DateTime  @default(now())
-  endDate   DateTime
+  endDate   DateTime?
   autoRenew Boolean   @default(true)
   payments  Payment[]
   plan      Plan      @relation(fields: [planId], references: [id], onDelete: Cascade)

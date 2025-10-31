@@ -42,7 +42,7 @@ const PaymentFlow: React.FC<PaymentFlowProps> = ({
   buttonText = "Invest",
   buttonClassName,
 }) => {
-  const { data: session } = useSession();
+  const { data: session, status: sessionStatus } = useSession();
   const router = useRouter();
   const [isProcessing, setIsProcessing] = useState(false);
   const orderDataRef = useRef<{
@@ -89,9 +89,11 @@ const PaymentFlow: React.FC<PaymentFlowProps> = ({
 
   const handlePayment = async () => {
     try {
-      // Check if user is logged in
-      if (!session) {
-        // Redirect to login with return URL to come back to pricing
+      if (sessionStatus === "loading") {
+        return;
+      }
+
+      if (sessionStatus === "unauthenticated" || !session) {
         router.push("/login?callbackUrl=/pricing");
         return;
       }
@@ -143,20 +145,46 @@ const PaymentFlow: React.FC<PaymentFlowProps> = ({
       };
 
       await initiatePayment(options);
-    } catch (error) {
+    } catch (error: any) {
       console.warn("Failed to create order:", error);
-      router.push("/login?callbackUrl=/pricing");
       setIsProcessing(false);
+
+      // Only redirect to login if it's an authentication error
+      const isAuthError =
+        error?.data?.code === "UNAUTHORIZED" ||
+        error?.message?.includes("UNAUTHORIZED") ||
+        error?.message?.includes("Missing or invalid authorization") ||
+        error?.message?.includes("Invalid or expired token");
+
+      if (isAuthError) {
+        router.push("/login?callbackUrl=/pricing");
+      } else {
+        // For other errors (network, validation, etc.), show user-friendly message
+        alert(
+          "Failed to create payment order. Please try again or contact support if the issue persists."
+        );
+      }
     }
   };
+
+  // Show loading state while session is being determined
+  const isButtonDisabled =
+    isProcessing || isLoading || sessionStatus === "loading";
+
+  const buttonTextDisplay =
+    sessionStatus === "loading"
+      ? "Loading..."
+      : isProcessing || isLoading
+        ? "Processing..."
+        : buttonText;
 
   return (
     <div className="flex flex-col gap-2">
       <PrimaryButton
-        classname={`${buttonClassName || "w-full"} ${isProcessing || isLoading ? "opacity-50 cursor-not-allowed" : ""}`}
-        onClick={isProcessing || isLoading ? undefined : handlePayment}
+        classname={`${buttonClassName || "w-full"} ${isButtonDisabled ? "opacity-50 cursor-not-allowed" : ""}`}
+        onClick={isButtonDisabled ? undefined : handlePayment}
       >
-        {isProcessing || isLoading ? "Processing..." : buttonText}
+        {buttonTextDisplay}
       </PrimaryButton>
       {error && <p className="text-sm text-red-500">Payment error: {error}</p>}
     </div>

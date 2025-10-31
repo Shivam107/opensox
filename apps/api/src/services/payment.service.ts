@@ -1,4 +1,4 @@
-import { rz_instance } from "../index.js";
+import { rz_instance } from "../clients/razorpay.js";
 import crypto from "crypto";
 import prismaModule from "../prisma.js";
 
@@ -43,7 +43,7 @@ type CreateOrderResponse = RazorpayOrderSuccess | RazorpayError;
 interface PaymentData {
   razorpayPaymentId: string;
   razorpayOrderId: string;
-  amount: number;
+  amount: number; // Amount in paise (smallest currency unit)
   currency: string;
 }
 
@@ -154,7 +154,7 @@ export const paymentService = {
           userId,
           razorpayPaymentId: paymentData.razorpayPaymentId,
           razorpayOrderId: paymentData.razorpayOrderId,
-          amount: paymentData.amount,
+          amount: paymentData.amount, // Amount in paise (smallest currency unit)
           currency: paymentData.currency,
           status: "captured",
         },
