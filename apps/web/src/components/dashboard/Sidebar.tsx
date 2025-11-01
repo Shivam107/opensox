@@ -51,8 +51,8 @@ export default function Sidebar() {
     window.open("https://discord.gg/37ke8rYnRM", "_blank");
   };
 
-  const supportClickHandler = () => {
-    window.open("https://pages.razorpay.com/pl_R6WHnm15Fm98fI/view", "_blank");
+  const premiumClickHandler = () => {
+    window.location.href = "/pricing";
   };
   const shareProjectHandler = () => {
     const msg: string =
