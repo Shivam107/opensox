@@ -94,16 +94,48 @@ export function decrypt(
 
 /**
  * Encrypt OAuth tokens in an Account object
+ * Only includes token fields that are explicitly present (not undefined) in the input
+ * This prevents overwriting existing tokens with null on partial updates
  */
 export function encryptAccountTokens(data: any): any {
   if (!data) return data;
 
-  return {
-    ...data,
-    refresh_token: data.refresh_token ? encrypt(data.refresh_token) : null,
-    access_token: data.access_token ? encrypt(data.access_token) : null,
-    id_token: data.id_token ? encrypt(data.id_token) : null,
-  };
+  const {
+    refresh_token: _refresh_token,
+    access_token: _access_token,
+    id_token: _id_token,
+    expires_at: _expires_at,
+    token_type: _token_type,
+    scope: _scope,
+    ...result
+  } = data;
+
+  // Only add token fields if they were explicitly provided
+  if (data.access_token !== undefined) {
+    result.access_token = encrypt(data.access_token);
+  }
+
+  if (data.refresh_token !== undefined) {
+    result.refresh_token = encrypt(data.refresh_token);
+  }
+
+  if (data.id_token !== undefined) {
+    result.id_token = encrypt(data.id_token);
+  }
+
+  if (data.expires_at !== undefined) {
+    result.expires_at = data.expires_at;
+  }
+
+  if (data.token_type !== undefined) {
+    result.token_type = data.token_type;
+  }
+
+  if (data.scope !== undefined) {
+    result.scope = data.scope;
+  }
+
+  return result;
 }
 
 /**

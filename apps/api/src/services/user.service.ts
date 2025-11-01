@@ -1,8 +1,6 @@
 import type { PrismaClient } from "@prisma/client";
-import type prismaModule from "../prisma.js";
+import type { ExtendedPrismaClient } from "../prisma.js";
 import { SUBSCRIPTION_STATUS } from "../constants/subscription.js";
-
-type ExtendedPrismaClient = typeof prismaModule.prisma;
 
 export const userService = {
   /**

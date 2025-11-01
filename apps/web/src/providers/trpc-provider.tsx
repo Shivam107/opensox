@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { httpBatchLink } from "@trpc/client";
 import { useState, useMemo } from "react";
 import { useSession } from "next-auth/react";
+import type { Session } from "next-auth";
 import superjson from "superjson";
 import { trpc } from "@/lib/trpc";
 
@@ -31,7 +32,7 @@ export function TRPCProvider({ children }: { children: React.ReactNode }) {
           transformer: superjson,
           url: trpcUrl,
           async headers() {
-            const token = (session as any)?.accessToken;
+            const token = (session as Session)?.accessToken;
             if (token) {
               return {
                 authorization: `Bearer ${token}`,

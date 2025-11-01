@@ -116,13 +116,30 @@ export const authService = {
       createData.session_state = session_state;
     }
 
-    const account = await prisma.account.upsert({
-      where: {
-        provider_providerAccountId: {
-          provider,
-          providerAccountId,
-        },
+    // Prisma rejects upsert with empty update object, so short-circuit to findUnique
+    const whereClause = {
+      provider_providerAccountId: {
+        provider,
+        providerAccountId,
       },
+    };
+
+    if (Object.keys(updateData).length === 0) {
+      const existingAccount = await prisma.account.findUnique({
+        where: whereClause,
+      });
+
+      if (existingAccount) {
+        return existingAccount;
+      }
+
+      return await prisma.account.create({
+        data: createData,
+      });
+    }
+
+    const account = await prisma.account.upsert({
+      where: whereClause,
       update: updateData,
       create: createData,
     });

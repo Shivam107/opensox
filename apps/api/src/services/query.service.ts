@@ -1,7 +1,5 @@
 import type { PrismaClient } from "@prisma/client";
-import type prismaModule from "../prisma.js";
-
-type ExtendedPrismaClient = typeof prismaModule.prisma;
+import type { ExtendedPrismaClient } from "../prisma.js";
 
 export const queryService = {
   /**

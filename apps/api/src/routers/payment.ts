@@ -7,7 +7,7 @@ import prismaModule from "../prisma.js";
 
 const { prisma } = prismaModule;
 
-const ALLOWED_NOTE_KEYS = ["plan", "user_email"] as const;
+const ALLOWED_NOTE_KEYS = ["plan"] as const;
 const MAX_NOTE_VALUE_LENGTH = 255;
 
 const createOrderSchema = z.object({

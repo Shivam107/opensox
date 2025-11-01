@@ -117,3 +117,5 @@ async function connectDB() {
 
 export { withTimeout };
 export default { prisma, connectDB };
+
+export type ExtendedPrismaClient = typeof prisma;

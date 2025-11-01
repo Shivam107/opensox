@@ -11,11 +11,31 @@ CREATE TYPE "PaymentStatus" AS ENUM ('created', 'authorized', 'captured', 'refun
 -- CreateEnum
 CREATE TYPE "SubscriptionStatus" AS ENUM ('created', 'authenticated', 'active', 'pending', 'halted', 'cancelled', 'completed', 'expired');
 
--- AlterTable
-ALTER TABLE "Payment" DROP COLUMN "status",
-ADD COLUMN     "status" "PaymentStatus" NOT NULL;
+-- AlterTable: Migrate Payment.status from TEXT to PaymentStatus enum
+-- First, temporarily drop NOT NULL constraint to allow safe conversion
+ALTER TABLE "Payment" ALTER COLUMN "status" DROP NOT NULL;
 
--- AlterTable
-ALTER TABLE "Subscription" DROP COLUMN "status",
-ADD COLUMN     "status" "SubscriptionStatus" NOT NULL,
-ALTER COLUMN "endDate" DROP NOT NULL;
+-- Convert the column type preserving existing data
+ALTER TABLE "Payment" ALTER COLUMN "status" TYPE "PaymentStatus" USING status::"PaymentStatus";
+
+-- Backfill any NULLs with a default value if needed (shouldn't be necessary but being safe)
+-- If there are NULLs, we'd set a default here, but since original was NOT NULL, this shouldn't be needed
+
+-- Re-add NOT NULL constraint after successful conversion
+ALTER TABLE "Payment" ALTER COLUMN "status" SET NOT NULL;
+
+-- AlterTable: Migrate Subscription.status from TEXT to SubscriptionStatus enum
+-- First, temporarily drop NOT NULL constraint to allow safe conversion
+ALTER TABLE "Subscription" ALTER COLUMN "status" DROP NOT NULL;
+
+-- Convert the column type preserving existing data
+ALTER TABLE "Subscription" ALTER COLUMN "status" TYPE "SubscriptionStatus" USING status::"SubscriptionStatus";
+
+-- Backfill any NULLs with a default value if needed (shouldn't be necessary but being safe)
+-- If there are NULLs, we'd set a default here, but since original was NOT NULL, this shouldn't be needed
+
+-- Re-add NOT NULL constraint after successful conversion
+ALTER TABLE "Subscription" ALTER COLUMN "status" SET NOT NULL;
+
+-- AlterTable: Make Subscription.endDate nullable
+ALTER TABLE "Subscription" ALTER COLUMN "endDate" DROP NOT NULL;
