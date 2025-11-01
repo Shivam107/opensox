@@ -23,7 +23,7 @@ export default function Filter({
   };
 
   const triggerClasses = clsx("text-sm font-medium", {
-    "text-slate-500": ["Hire contributors", "Funding", "Trending"].includes(
+    "text-slate-300": ["Hire contributors", "Funding", "Trending"].includes(
       filterName
     ),
   });
@@ -42,12 +42,12 @@ export default function Filter({
                   value={filter}
                   id={filter}
                   onClick={() => recordFilterInput(filter)}
-                  className="border-[#1a1a1d] text-ox-purple"
+                  className="border-[#28282c] bg-[#141418] text-ox-purple transition data-[state=checked]:border-ox-purple data-[state=checked]:bg-ox-purple/20 data-[state=checked]:ring-2 data-[state=checked]:ring-ox-purple/50"
                 />
                 <Label
                   htmlFor={filter}
                   onClick={() => recordFilterInput(filter)}
-                  className="text-sm text-zinc-400 cursor-pointer"
+                  className="text-sm text-zinc-300 cursor-pointer transition-colors"
                 >
                   {filter}
                 </Label>
