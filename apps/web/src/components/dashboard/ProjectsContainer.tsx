@@ -80,8 +80,8 @@ export default function ProjectsContainer({
           className="
             w-full bg-[#15161a] border border-[#1a1a1d] rounded-lg
             h-[80vh] overflow-y-auto overflow-x-auto relative
-            [&::-webkit-scrollbar]:w-1
-            [&::-webkit-scrollbar]:hover:w-2
+            [&::-webkit-scrollbar]:w-2
+      
             [&::-webkit-scrollbar]:h-1
             [&::-webkit-scrollbar-track]:bg-transparent
             [&::-webkit-scrollbar-thumb]:bg-ox-purple/30
