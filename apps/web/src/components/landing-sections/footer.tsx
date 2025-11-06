@@ -33,7 +33,7 @@ const Footer = () => {
             </div>
             <div className="flex items-center gap-2">
               <Image
-                src="/ajeetunc.jpeg"
+                src="/ajeetunc.webp"
                 alt="ajeetunc"
                 width={32}
                 height={32}
