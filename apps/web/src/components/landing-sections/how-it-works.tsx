@@ -9,7 +9,7 @@ const data = [
         title: "1. Set Your Filters",
         content:
             "Choose the languages, stack, activity level, and other preferences that matter to you.",
-        image: "/assets/filter.png",
+        image: "/assets/filter.webp",
         icon: <Upload className="w-6 h-6 text-primary" />,
     },
     {
@@ -17,7 +17,7 @@ const data = [
         title: "2. Search Instantly",
         content:
             "Hit search and explore thousands of open-source repositories matched to your criteria.",
-        image: "/assets/search.png",
+        image: "/assets/search.webp",
         icon: <Zap className="w-6 h-6 text-primary" />,
     },
     {
@@ -25,7 +25,7 @@ const data = [
         title: "3. Discover & Contribute",
         content:
             "Find the perfect project for your stack, start exploring the code, and make meaningful contributions.",
-        image: "/assets/contribute.png",
+        image: "/assets/contribute.webp",
         icon: <Sparkles className="w-6 h-6 text-primary" />,
     },
 ];

@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import imgUrl from "../../assets/images/user_dp.png";
+import imgUrl from "../../assets/images/user_dp.webp";
 
 export const ProfilePic = () => {
   return (
