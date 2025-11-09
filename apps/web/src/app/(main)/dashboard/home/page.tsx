@@ -1,5 +1,5 @@
 "use client";
-
+import React from "react";
 import { useProjectTitleStore } from "@/store/useProjectTitleStore";
 import Dashboard from "../page";
 import { useProjectsData } from "@/store/useProjectsDataStore";
@@ -16,7 +16,7 @@ const Home = () => {
     const initializeState = () => {
       setData(projectsOfTheWeek);
       setRenderProjects(true);
-      setProjectTitle("Projects of the week");
+      setProjectTitle("Featured projects");
     };
 
     initializeState();
