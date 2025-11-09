@@ -105,7 +105,7 @@ const Navbar = () => {
         </Link>
         <Link href="/dashboard/home" className="cursor-pointer z-30">
           <PrimaryButton classname="px-3 py-2 text-sm whitespace-nowrap md:px-5 md:py-3 md:text-base">
-            <Terminal className="w-4 h-4 md:w-5 md:h-5"/>
+            <Terminal className="w-4 h-4 md:w-5 md:h-5" />
             <span>Get Started</span>
           </PrimaryButton>
         </Link>
