@@ -9,7 +9,7 @@ import {
   XMarkIcon,
   HomeIcon,
   FolderIcon,
-  ArrowLeftOnRectangleIcon,
+  ArrowRightOnRectangleIcon,
   ChevronDoubleLeftIcon,
   ChevronDoubleRightIcon,
   MagnifyingGlassIcon,
@@ -43,7 +43,8 @@ const getSidebarLinkClassName = (currentPath: string, routePath: string) => {
 };
 
 export default function Sidebar() {
-  const { showSidebar, setShowSidebar, isCollapsed, toggleCollapsed } = useShowSidebar();
+  const { showSidebar, setShowSidebar, isCollapsed, toggleCollapsed } =
+    useShowSidebar();
   const pathname = usePathname();
   const { setShowFilters } = useFilterStore();
 
@@ -69,10 +70,6 @@ export default function Sidebar() {
     window.open(mailtoLink, "_blank");
   };
 
-  const handleLogout = () => {
-    signOut({ callbackUrl: "/" });
-  };
-
   const handleFindProjects = () => {
     setShowFilters(true);
   };
@@ -88,7 +85,7 @@ export default function Sidebar() {
       {/* Mobile header */}
       <div className="flex justify-between px-4 py-4 border-b border-ox-gray xl:hidden">
         <div className="flex items-center">
-          <h1 className="text-xl font-semibold text-ox-white">Opensox</h1>
+          <h1 className="text-xl font-semibold text-ox-white">Opensox AI</h1>
         </div>
         <IconWrapper onClick={() => setShowSidebar(false)}>
           <XMarkIcon className="size-5 text-ox-purple" />
@@ -99,7 +96,7 @@ export default function Sidebar() {
       <div className="hidden xl:flex items-center justify-between px-4 py-4 border-b border-[#1a1a1d]">
         {!isCollapsed && (
           <span className="text-[#eaeaea] font-semibold tracking-wide select-none text-xl">
-            Opensox
+            Opensox AI
           </span>
         )}
         <IconWrapper
@@ -143,7 +140,7 @@ export default function Sidebar() {
         />
         <SidebarItem
           itemName="Opensox premium"
-          onclick={supportClickHandler}
+          onclick={premiumClickHandler}
           icon={<StarIcon className="size-5" />}
           collapsed={isCollapsed}
         />
@@ -193,7 +190,9 @@ function ProfileMenu({ isCollapsed }: { isCollapsed: boolean }) {
         {!isCollapsed && (
           <div className="flex-1 flex items-center justify-between">
             <div className="flex flex-col">
-              <span className="text-xs text-[#eaeaea] font-semibold">Ajeet</span>
+              <span className="text-xs text-[#eaeaea] font-semibold">
+                Ajeet
+              </span>
               <span className="text-[10px] text-zinc-400">hi@opensox.ai</span>
             </div>
             <ChevronDoubleLeftIcon
@@ -208,7 +207,7 @@ function ProfileMenu({ isCollapsed }: { isCollapsed: boolean }) {
           <SidebarItem
             itemName="Logout"
             onclick={() => signOut({ callbackUrl: "/" })}
-            icon={<ArrowLeftOnRectangleIcon className="size-5" />}
+            icon={<ArrowRightOnRectangleIcon className="size-5" />}
             collapsed={false}
           />
         </div>

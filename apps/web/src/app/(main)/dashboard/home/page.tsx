@@ -16,7 +16,7 @@ const Home = () => {
     const initializeState = () => {
       setData(projectsOfTheWeek);
       setRenderProjects(true);
-      setProjectTitle("Projects of the week");
+      setProjectTitle("Featured projects");
     };
 
     initializeState();
