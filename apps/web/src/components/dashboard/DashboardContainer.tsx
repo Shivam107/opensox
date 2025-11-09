@@ -7,34 +7,36 @@ import { useLoading } from "@/store/useLoadingStore";
 import { useProjectsNotFoundStore } from "@/store/useProjectsFoundStore";
 import { ErrMsg } from "../ui/ErrMsg";
 import SpinnerElm from "../ui/SpinnerElm";
+import { usePathname } from "next/navigation";
 
 export default function DashboardContainer() {
   const { renderProjects } = useRenderProjects();
   const { data } = useProjectsData();
   const { loading } = useLoading();
   const { projectsNotFound } = useProjectsNotFoundStore();
+  const pathname = usePathname();
+  
+  const isProjectsPage = pathname === "/dashboard/projects";
+
   return (
-    <div
-      className={`h-[80vh] md:h-[88vh] rounded-lg mx-1 md:mx-4 bg-ox-black-1 border border-ox-gray ${!renderProjects ? "flex items-center justify-center" : ""}`}
-    >
-      <div className={`max-h-full ${!loading ? "overflow-y-scroll" : ""}`}>
-        {renderProjects && (
+    <div className={`min-h-[calc(100vh-64px)] ${isProjectsPage ? "flex items-center justify-center" : ""}`}>
+      <div className={`w-full ${!loading ? "h-full" : ""}`}>
+        {renderProjects && !loading && (
           <ProjectsContainer projects={data}></ProjectsContainer>
         )}
         {loading && (
-          <SpinnerElm text={"loading cool projects for you..."}></SpinnerElm>
+          <div className="flex items-center justify-center h-full">
+            <SpinnerElm text={"loading cool projects for you..."}></SpinnerElm>
+          </div>
         )}
-        {projectsNotFound && (
-          <ErrMsg
-            text={
-              "No projects were found matching the selected filters. Please adjust the filters and try again."
-            }
-          ></ErrMsg>
-        )}
-        {!renderProjects && !loading && (
-          <ErrMsg
-            text={"Click on 'Find Projects' to see the magic."}
-          ></ErrMsg>
+        {projectsNotFound && !loading && (
+          <div className="flex items-center justify-center h-full">
+            <ErrMsg
+              text={
+                "No projects were found matching the selected filters. Please adjust the filters and try again."
+              }
+            ></ErrMsg>
+          </div>
         )}
       </div>
     </div>

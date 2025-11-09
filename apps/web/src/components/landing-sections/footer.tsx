@@ -20,7 +20,7 @@ const Footer = () => {
       {/* Bottom Section */}
       <div className="pt-8 border-t border-[#252525] space-y-8">
         {/* Top Row - Profile Picture and Navigation */}
-        <div className="relative flex items-start justify-between">
+        <div className="relative flex items-start justify-between gap-6 lg:gap-0">
           {/* Profile Picture - Left */}
           <div className="flex flex-col gap-4">
             <div>
@@ -33,7 +33,7 @@ const Footer = () => {
             </div>
             <div className="flex items-center gap-2">
               <Image
-                src="/ajeetunc.jpeg"
+                src="/ajeetunc.webp"
                 alt="ajeetunc"
                 width={32}
                 height={32}

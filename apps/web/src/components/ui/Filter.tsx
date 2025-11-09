@@ -23,39 +23,31 @@ export default function Filter({
   };
 
   const triggerClasses = clsx("text-sm font-medium", {
-    "text-slate-500": ["Hire contributors", "Funding", "Trending"].includes(
+    "text-slate-300": ["Hire contributors", "Funding", "Trending"].includes(
       filterName
     ),
   });
 
   return (
     <div onClick={onClick}>
-      <AccordionItem value={filterName} className="px-3">
+      <AccordionItem value={filterName} className="px-6 border-none">
         <AccordionTrigger className={triggerClasses}>
-          {filterName}
+          <span className="text-sm font-medium text-white">{filterName}</span>
         </AccordionTrigger>
-        <AccordionContent
-          className={
-            filterName === "Hire contributors" ||
-            filterName === "Funding" ||
-            filterName === "Trending"
-              ? "text-white-100"
-              : ""
-          }
-        >
-          <RadioGroup>
+        <AccordionContent className="pt-1 pb-3">
+          <RadioGroup className="space-y-3">
             {filters.map((filter) => (
-              <div key={filter} className="flex items-center space-x-2">
+              <div key={filter} className="flex items-center space-x-3">
                 <RadioGroupItem
                   value={filter}
                   id={filter}
-                  onClick={() => {
-                    recordFilterInput(filter);
-                  }}
+                  onClick={() => recordFilterInput(filter)}
+                  className="border-[#28282c] bg-[#141418] text-ox-purple transition data-[state=checked]:border-ox-purple data-[state=checked]:bg-ox-purple/20 data-[state=checked]:ring-2 data-[state=checked]:ring-ox-purple/50"
                 />
                 <Label
                   htmlFor={filter}
                   onClick={() => recordFilterInput(filter)}
+                  className="text-sm text-zinc-300 cursor-pointer transition-colors"
                 >
                   {filter}
                 </Label>

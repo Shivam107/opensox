@@ -57,24 +57,29 @@ export default function FiltersContainer() {
   };
 
   return (
-    <div className="fixed top-8 md:top-14 right-4 md:right-2 inset-0 z-50 flex justify-center items-start p-4 lg:p-0">
+    <div className="fixed inset-0 z-50">
+      {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-black/20"
+        className="fixed inset-0 bg-black/30 backdrop-blur-sm transition-opacity duration-300"
         onClick={() => toggleShowFilters()}
       />
-      <div className="w-full max-w-[90%] md:max-w-[400px] lg:w-80 h-[60vh] lg:h-96 flex flex-col rounded-lg border border-ox-gray bg-ox-black-1 relative lg:absolute lg:right-20">
-        <div className="flex h-8 lg:h-[10%] border-b border-ox-gray justify-between items-center px-4">
-          <h1 className="text-sm text-ox-purple font-semibold">Filters</h1>
-          <IconWrapper>
+
+      {/* Filter Panel */}
+      <div className="fixed right-0 top-0 h-full w-full sm:w-[400px] flex flex-col bg-[#0c0c0d] shadow-2xl transition-transform duration-300 ease-out">
+        {/* Header */}
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[#1a1a1d]">
+          <h1 className="text-lg font-medium text-white">Filters</h1>
+          <IconWrapper className="hover:bg-[#1a1a1d] rounded-md transition-colors">
             <XMarkIcon
-              className="size-5 lg:size-4 text-ox-purple"
+              className="size-5 text-zinc-400"
               onClick={() => toggleShowFilters()}
             />
           </IconWrapper>
         </div>
 
-        <div className="flex-1 overflow-y-auto">
-          <Accordion type="multiple" className="w-full">
+        {/* Filter Content */}
+        <div className="flex-1 overflow-y-auto py-4">
+          <Accordion type="multiple" className="space-y-2">
             <Filter
               filterName="Tech stack"
               filters={[
@@ -130,12 +135,13 @@ export default function FiltersContainer() {
           </Accordion>
         </div>
 
-        <div className="h-8 lg:h-[10%] border-t border-ox-gray flex items-center px-4 justify-end">
+        {/* Footer */}
+        <div className="p-6 border-t border-[#1a1a1d]">
           <Button
-            className="font-semibold text-white bg-ox-purple text-[14px] h-6 lg:h-6 w-18 lg:w-12 hover:bg-white-500"
+            className="w-full py-6 font-medium text-white bg-ox-purple hover:bg-ox-purple/90 transition-colors"
             onClick={handleSearchProjects}
           >
-            Search
+            Search Projects
           </Button>
         </div>
       </div>

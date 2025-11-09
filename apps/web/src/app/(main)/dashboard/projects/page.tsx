@@ -3,6 +3,7 @@
 import React, { Suspense, useEffect } from "react";
 import { useRenderProjects } from "@/store/useRenderProjectsStore";
 import { useProjectTitleStore } from "@/store/useProjectTitleStore";
+import { useProjectsData } from "@/store/useProjectsDataStore";
 
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -11,11 +12,13 @@ const Dashboard = React.lazy(() => import("../page"));
 const Projects = () => {
   const { setRenderProjects } = useRenderProjects();
   const { setProjectTitle } = useProjectTitleStore();
+  const { setData } = useProjectsData();
 
   useEffect(() => {
-    setRenderProjects(false);
-    setProjectTitle("Projects of the week");
-  }, [setRenderProjects, setProjectTitle]);
+    setRenderProjects(true); // Change to true to always render the container
+    setProjectTitle("Projects");
+    setData([]); // Clear any existing projects
+  }, [setRenderProjects, setProjectTitle, setData]);
 
   return (
     <Suspense
