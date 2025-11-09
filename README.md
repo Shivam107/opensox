@@ -58,7 +58,14 @@ Create environment files for both the backend and the frontend before running th
 
 ### Backend (`apps/api/.env`)
 
-Create a file at `apps/api/.env` with:
+Copy the example environment file and update it with your values:
+
+```bash
+cd apps/api
+cp .env.example .env
+```
+
+Then edit `apps/api/.env` and fill in the required values:
 
 ```bash
 # Required
@@ -190,7 +197,7 @@ Alternatively, you can run the API server using Docker. A `Dockerfile` is provid
 
 ### Building and Running
 
-1. Make sure you have your `.env` file set up in `apps/api/.env` (see [Backend environment variables](#backend-appsapienv) section above)
+1. Make sure you have your `.env` file set up in `apps/api/.env`. You can copy from `.env.example` (see [Backend environment variables](#backend-appsapienv) section above)
 
 2. From the root directory, build the Docker image:
 
